@@ -4,20 +4,15 @@ NETWORK = "private_network"
 Vagrant.configure("2") do |config|
   config.vm.box = "debian/bookworm64"
 
+  config.vm.hostname = "acroueS"
+  config.vm.network NETWORK, ip: "192.168.56.110"
+
   config.vm.provider PROVIDER do |vb|
+    vb.name = "acroueS"
     vb.memory = "2048"
     vb.cpus = "2"
   end
 
-  config.vm.define "acroueS" do |control|
-    control.vm.hostname = "acroueS"
-    control.vm.network NETWORK, ip: "192.168.56.110"
-
-    control.vm.provider PROVIDER do |v|
-      v.customize ["modifyvm", :id, "--name", "acroueS"]
-    end
-
-    control.vm.provision "shell", path: "./scripts/init_server.sh"
-  end
-
+  config.vm.provision "file", source: "confs/", destination: "$HOME/remote/confs"
+  config.vm.provision "shell", path: "./scripts/init_server.sh"
 end
