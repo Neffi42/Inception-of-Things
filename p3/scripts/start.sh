@@ -1,11 +1,13 @@
 #!/bin/sh
 
 echo " * Creating a k3d cluster"
-k3d cluster create mycluster
+k3d cluster create default -p 443:443 -p 8888:30010
 
 echo " * Installing Argo CD"
 kubectl create ns argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl apply -n argocd -k patchs
+kubectl apply -n argocd -f confs
 
 echo " * Setting 'argocd' as default namespace"
 kubectl config set-context --current --namespace=argocd
